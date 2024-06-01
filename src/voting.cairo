@@ -1,7 +1,7 @@
 use starknet::ContractAddress;
 
 #[starknet::interface]
-trait IVoting<T> {
+pub trait IVoting<T> {
     fn register_voter(ref self: T, voter: ContractAddress) -> bool;
     fn add_candidate(ref self: T, name: felt252) -> bool;
     fn vote(ref self: T, candidate_index: u8);
@@ -9,10 +9,12 @@ trait IVoting<T> {
     fn get_candidate_vote(self: @T, index: u8) -> u32;
     fn check_voter_eligibility(self: @T, voter_address: ContractAddress) -> bool;
     fn winner(self: @T) -> Voting::Candidate;
+    fn get_owner(self: @T) -> ContractAddress;
+    fn transfer_ownership(ref self: T, new_owner: ContractAddress);
 }
 
 #[starknet::contract]
-mod Voting {
+pub mod Voting {
     use core::starknet::event::EventEmitter;
     use super::ContractAddress;
     use starknet::get_caller_address;
@@ -49,6 +51,7 @@ mod Voting {
         VoterRegistered: VoterRegistered,
         CandidateAdded: CandidateAdded,
         Voted: Voted,
+        OwnershipTransfer: OwnershipTransfer,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -70,6 +73,14 @@ mod Voting {
         #[key]
         voted_id: u8,
         voter_address: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct OwnershipTransfer {
+        #[key]
+        prev_owner: ContractAddress,
+        #[key]
+        new_owner: ContractAddress,
     }
 
     #[abi(embed_v0)]
@@ -152,6 +163,9 @@ mod Voting {
 
         //winning candidate 
         fn winner(self: @ContractState) -> Candidate {
+            //who should call this
+            self.only_owner();
+
             let mut highest_votes = 0;
             let mut winning_candidate = Option::None;
 
@@ -172,6 +186,21 @@ mod Voting {
                 Option::Some(candidate) => candidate,
                 Option::None => panic!("No candidates found"),
             }
+        }
+
+        //get owner
+        fn get_owner(self: @ContractState) -> ContractAddress {
+            self.owner.read()
+        }
+
+        //ownership ransfer
+        fn transfer_ownership(ref self: ContractState, new_owner: ContractAddress) {
+            self.only_owner();
+
+            let previous_owner = self.owner.read();
+            self.owner.write(new_owner);
+
+            self.emit(OwnershipTransfer { prev_owner: previous_owner, new_owner: new_owner });
         }
     }
 
