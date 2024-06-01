@@ -6,6 +6,9 @@ This repository contains the source code for a Voting smart contract written in 
 
 The Voting smart contract allows users to register as voters, add candidates, and vote for their preferred candidates. It ensures secure and transparent voting, preventing double voting and allowing only registered voters to participate.
 
+### Contract Address
+Deployed to starknet with the contract address - [0x065305b233e56dd71946a51b41b3cf8a02486310cd796cd620906f3eb9289b2f](https://sepolia.starkscan.co/contract/0x065305b233e56dd71946a51b41b3cf8a02486310cd796cd620906f3eb9289b2f)
+
 ### Features
 
 - **Voter Registration**: Only the contract owner can register voters.
