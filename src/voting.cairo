@@ -12,6 +12,7 @@ trait IVoting<T> {
 
 #[starknet::contract]
 mod Voting {
+    use core::starknet::event::EventEmitter;
     use super::ContractAddress;
     use starknet::get_caller_address;
 
@@ -41,6 +42,35 @@ mod Voting {
         self.owner.write(initial_owner)
     }
 
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        VoterRegistered: VoterRegistered,
+        CandidateAdded: CandidateAdded,
+        Voted: Voted,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct VoterRegistered {
+        #[key]
+        addr: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct CandidateAdded {
+        #[key]
+        id: u8,
+        #[key]
+        name: felt252,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct Voted {
+        #[key]
+        voted_id: u8,
+        voter_address: ContractAddress,
+    }
+
     #[abi(embed_v0)]
     impl VotingImpl of super::IVoting<ContractState> {
         // register voter
@@ -53,7 +83,8 @@ mod Voting {
             let voter_data = Voter { has_voted: false, is_registered: true };
 
             self.voters.write(voter, voter_data);
-
+            //event
+            self.emit(VoterRegistered { addr: voter });
             true
         }
 
