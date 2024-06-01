@@ -100,6 +100,9 @@ mod Voting {
 
             self.candidateId.write(current_candidate_id);
 
+            //event
+            self.emit(CandidateAdded { id: current_candidate_id, name: name });
+
             true
         }
 
@@ -123,6 +126,9 @@ mod Voting {
             let mut voter = self.voters.read(user_address);
             voter.has_voted = true;
             self.voters.write(user_address, voter);
+
+            //event
+            self.emit(Voted { voted_id: candidate_index, voter_address: user_address });
         }
     }
 
