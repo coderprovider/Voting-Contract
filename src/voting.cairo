@@ -4,7 +4,7 @@ use starknet::ContractAddress;
 pub trait IVoting<T> {
     fn register_voter(ref self: T, voter: ContractAddress) -> bool;
     fn add_candidate(ref self: T, name: felt252) -> bool;
-    fn vote(ref self: T, candidate_index: u8);
+    fn vote(ref self: T, candidate_index: u8) -> bool;
     fn get_candidate(self: @T, index: u8) -> Voting::Candidate;
     fn get_candidate_vote(self: @T, index: u8) -> u32;
     fn check_voter_eligibility(self: @T, voter_address: ContractAddress) -> bool;
@@ -119,9 +119,11 @@ pub mod Voting {
         }
 
         //vote
-        fn vote(ref self: ContractState, candidate_index: u8) {
-            //check if registered
+        fn vote(ref self: ContractState, candidate_index: u8) -> bool {
             let user_address = get_caller_address();
+            assert(user_address != self.owner.read(), 'owner should not call');
+
+            //check if registered
             let check_registered = self.voters.read(user_address).is_registered;
             assert(check_registered, 'Not registered');
 
@@ -141,6 +143,8 @@ pub mod Voting {
 
             //event
             self.emit(Voted { voted_id: candidate_index, voter_address: user_address });
+
+            true
         }
 
         //get candidate by index

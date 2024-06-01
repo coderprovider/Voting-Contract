@@ -3,8 +3,8 @@ version = 1
 
 [[package]]
 name = "snforge_std"
-version = "0.23.0"
-source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.23.0#f2bff8f796763ada77fe6033ec1b034ceee22abd"
+version = "0.24.0"
+source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.24.0#95e9fb09cb91b3c05295915179ee1b55bf923653"
 
 [[package]]
 name = "voting"
