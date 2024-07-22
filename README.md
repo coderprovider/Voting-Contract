@@ -13,16 +13,16 @@ Deployed to starknet with the contract address - [0x065305b233e56dd71946a51b41b3
 
 - **Voter Registration**: Only the contract owner can register voters.
 - **Candidate Addition**: Only the contract owner can add new candidates.
-- **Voting**: Registered voters can vote for their preferred candidates.
+- **Voting**: Registered voters can vote for their preferred candidates. 
 - **Results**: Retrieve the candidate with the highest votes.
 
 ## Contract Structure
-
+ 
 ### Storage
 
-- `candidates`: A mapping from candidate ID to `Candidate` struct.
-- `candidateId`: A counter for the total number of candidates.
-- `owner`: The address of the contract owner.
+- `candidates`: A mapping from candidate ID to `Candidate` struct. 
+- `candidateId`: A counter for the total number of candidates. 
+- `owner`: The address of the contract owner. 
 - `voters`: A mapping from voter address to `Voter` struct.
 
 ### Structs
